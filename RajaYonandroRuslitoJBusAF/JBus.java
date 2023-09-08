@@ -47,9 +47,13 @@ public class Jbus{
         return 0.05f;
     }
     public static int getAdminFee(int price){
-        return price;
+        int adminCut = (int)getAdminFeePercentage();
+        int adminFee;
+        adminFee = price * adminCut;
+        return adminFee;
     }
     public static int getTotalPrice(int price, int numberOfSeat){
-        return price * numberOfSeat;
+        int adminFee = getAdminFee(price * numberOfSeat);
+        return price * numberOfSeat + adminFee;
     }
 } 
