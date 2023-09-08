@@ -14,34 +14,31 @@ public class Jbus{
         return true;
     }
     public static float getDiscountPercentage(int beforeDiscount, int afterDiscount){
-        float percentage;
+        
         if(beforeDiscount < afterDiscount){
-            percentage = 0.0f;
+            return 0.0f;
         }
         else if(afterDiscount == 0){
-            percentage = 100.0f;
+            return 100.0f;
         }
         else{
-            percentage = (beforeDiscount - afterDiscount)/beforeDiscount;
+             return ((beforeDiscount - afterDiscount)*10/beforeDiscount);
         }
-        return percentage;
+        
     }
     public static float getDiscountedPrice(int price, float discountPercentage){
         float afterDisc;
         if(discountPercentage > 100.0f){
             afterDisc = 0.0f;
         }
-        else if(price == 0){
-            afterDisc = 0.0f;
-        }
-        else{
-            afterDisc = price - (price * discountPercentage);
-        }
+        
+        afterDisc = (price - (price * (discountPercentage/100)));
+        
         return afterDisc;
     }
     public static int getOriginalPrice(int discountedPrice, float discountPercentage){
-        int discPer = (int)discountPercentage;
-        return discountedPrice - ((100 - discPer) * 100);
+        int discPrice;
+        return discPrice = (int)((100/(100.f-discountPercentage)) * discountPercentage);
     }
     public static float getAdminFeePercentage(){
         return 0.05f;
