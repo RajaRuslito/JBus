@@ -22,7 +22,7 @@ public class Jbus{
             return 100.0f;
         }
         else{
-             return ((beforeDiscount - afterDiscount)*10/beforeDiscount);
+            return ((beforeDiscount - afterDiscount)*10/beforeDiscount);
         }
         
     }
@@ -38,15 +38,15 @@ public class Jbus{
     }
     public static int getOriginalPrice(int discountedPrice, float discountPercentage){
         int discPrice;
-        return discPrice = (int)((100/(100.f-discountPercentage)) * discountPercentage);
+        return discPrice = (int)((100/(100.f-discountPercentage) * (float)(discountedPrice)));
     }
     public static float getAdminFeePercentage(){
         return 0.05f;
     }
     public static int getAdminFee(int price){
-        int adminCut = (int)getAdminFeePercentage();
+        float adminCut = getAdminFeePercentage();
         int adminFee;
-        adminFee = price * adminCut;
+        adminFee = (int)(price * adminCut);
         return adminFee;
     }
     public static int getTotalPrice(int price, int numberOfSeat){
