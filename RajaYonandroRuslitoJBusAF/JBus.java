@@ -19,10 +19,15 @@ public class Jbus{
             return 0.0f;
         }
         else if(afterDiscount == 0){
-            return 100.0f;
+            if (beforeDiscount == 0){
+                return 0.0f;
+            }
+            else{
+                return 100.0f;
+            }
         }
         else{
-            return ((beforeDiscount - afterDiscount)*10/beforeDiscount);
+            return 10 * ((beforeDiscount - afterDiscount)*10/beforeDiscount);
         }
         
     }
@@ -31,9 +36,9 @@ public class Jbus{
         if(discountPercentage > 100.0f){
             afterDisc = 0.0f;
         }
-        
+        else{
         afterDisc = (price - (price * (discountPercentage/100)));
-        
+        }
         return afterDisc;
     }
     public static int getOriginalPrice(int discountedPrice, float discountPercentage){
