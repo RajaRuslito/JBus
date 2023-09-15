@@ -6,6 +6,7 @@ class Price{
     int discount;
     
     public Price (double price) {
+        this.price = price;
         this.discount = 0;
         this.rebate = 0;
     }
@@ -88,8 +89,5 @@ public class Jbus{
     public static int getTotalPrice(int price, int numberOfSeat){
         int adminFee = getAdminFee(price * numberOfSeat);
         return price * numberOfSeat + adminFee;
-    }
-    public class Price{
-        
     }
 } 
