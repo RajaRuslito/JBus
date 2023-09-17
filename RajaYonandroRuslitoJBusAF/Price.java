@@ -24,11 +24,10 @@ class Price{
     private double getDiscountedPrice(){
         double disc;
         if(discount >= 100){
-            discount = 100;
-            return 0.0f;
+            return 0;
         }
         else{
-            disc = price - (price * discount);
+            disc = price * (int)(100 - discount) / 100;
         }
         return disc;
     }
