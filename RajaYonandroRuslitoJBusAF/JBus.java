@@ -59,11 +59,11 @@ public class JBus{
         adminFee = (int)(price * adminCut);
         return adminFee;
     }
-    public static int getTotalPrice(int price, int numberOfSeat){
+    private static int getTotalPrice(int price, int numberOfSeat){
         int adminFee = getAdminFee(price * numberOfSeat);
         return price * numberOfSeat + adminFee;
     }
-    public static Bus createBus(){
+    private static Bus createBus(){
         Price price = new Price(750000, 5);
         Bus bus = new Bus("Netlab Bus", Facility.LUNCH, price, 25);
         return bus;
