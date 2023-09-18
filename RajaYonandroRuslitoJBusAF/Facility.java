@@ -8,6 +8,6 @@ public enum Facility{
     COOL_BOX,
     WIFI,
     LCD_TV,
-    ELECTRIC_SOCKET,
+    ELECTRIC_SOCKET, 
     LARGE_BAGGAGE;
 }

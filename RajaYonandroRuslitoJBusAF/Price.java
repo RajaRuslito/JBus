@@ -1,7 +1,7 @@
 package RajaYonandroRuslitoJBusAF;
 
 
-class Price{
+public class Price{
     public double rebate;
     public double price;
     public int discount;

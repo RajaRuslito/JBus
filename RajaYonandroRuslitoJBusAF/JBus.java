@@ -1,7 +1,7 @@
 package RajaYonandroRuslitoJBusAF;
 
-public class Jbus{ 
-    public static void main(String [] args){
+public class JBus{ 
+    public static void main(String[] args){
         Bus testBus = createBus();
         
         System.out.println(testBus.name);
