@@ -19,7 +19,7 @@ public class Payment extends Invoice
         this.busSeat = busSeat;
     }
     public String print(){
-        String printThis = "Station Details = " + "\n Bus ID : " + busId + "\n Departure : " + departureDate + "\n Bus Seat : " + busSeat;
+        String printThis = "\n Station Details = " + "ID :" + id +"\n Bus ID : " + busId + "\n Departure : " + departureDate + "\n Bus Seat : " + busSeat;
         return printThis;
     }
     public int getBusid(){

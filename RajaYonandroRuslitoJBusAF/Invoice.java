@@ -19,7 +19,7 @@ public class Invoice extends Serializable
         this.time = time;
     }
     public String print(){
-        String printThis = " Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Time : " + time;
+        String printThis = "ID : " + id + "\n Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Time : " + time;
         return printThis;
     }
 }
