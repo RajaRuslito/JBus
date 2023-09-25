@@ -2,8 +2,8 @@ package RajaYonandroRuslitoJBusAF;
 
 public class Station extends Serializable
 {
-    City city;
-    String stationName;
+    public City city;
+    public String stationName;
     
     public Station(int id, String stationName, City city){
         super(id);
