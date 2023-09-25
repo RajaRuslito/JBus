@@ -27,4 +27,7 @@ public class Rating{
             return (this.total / this.count);
         }
     }
+    public String toString(){
+        return " Count : " + count + "\n Total : " + total;
+    }
 }

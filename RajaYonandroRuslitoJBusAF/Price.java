@@ -42,4 +42,7 @@ public class Price{
         }
     }
     */
+    public String toString(){
+        return " Price : " + price + "\n Rebate : " + rebate;
+    }
 }

@@ -5,7 +5,20 @@ public class Invoice extends Serializable
     public String time;
     public int buyerId;
     public int renterId;
+    public BusRating rating;
+    public PaymentStatus status;
     
+    public enum BusRating{
+        NONE, 
+        NEUTRAL, 
+        GOOD, 
+        BAD;
+    }
+    public enum PaymentStatus{
+        FAILED,
+        WAITING,
+        SUCCESS;
+    }
     protected Invoice(int id, int buyerId, int renterId, String time){
         super(id);
         this.buyerId = buyerId;
@@ -18,8 +31,7 @@ public class Invoice extends Serializable
         this.renterId = renter.id;
         this.time = time;
     }
-    public String print(){
-        String printThis = "ID : " + id + "\n Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Time : " + time;
-        return printThis;
+    public String toString(){
+        return "\n ID : " + id + "\n Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Time : " + time;
     }
 }
