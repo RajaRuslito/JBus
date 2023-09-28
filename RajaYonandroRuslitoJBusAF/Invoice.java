@@ -1,8 +1,9 @@
 package RajaYonandroRuslitoJBusAF;
+import java.util.Calendar;
 
 public class Invoice extends Serializable
 {
-    public String time;
+    public Calendar time;
     public int buyerId;
     public int renterId;
     public BusRating rating;
@@ -23,7 +24,7 @@ public class Invoice extends Serializable
         super(id);
         this.buyerId = buyerId;
         this.renterId = renterId;
-        this.time = time;
+        this.time = Calendar.getInstance();
         this.rating = BusRating.NONE;
         this.status = PaymentStatus.WAITING;
     }
@@ -31,11 +32,11 @@ public class Invoice extends Serializable
         super(id);
         this.buyerId = buyer.id;
         this.renterId = renter.id;
-        this.time = time;
+        this.time = Calendar.getInstance();
         this.rating = BusRating.NONE;
         this.status = PaymentStatus.WAITING;
     }
     public String toString(){
-        return "\n ID : " + id + "\n Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Time : " + time + "\n Rating : " + rating + "\n Status : " + status;
+        return "\n ID : " + id + "\n Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Time : " + time.getTime() + "\n Rating : " + rating + "\n Status : " + status;
     }
 }
