@@ -20,7 +20,7 @@ public class Invoice extends Serializable
         WAITING,
         SUCCESS;
     }
-    protected Invoice(int id, int buyerId, int renterId, String time){
+    protected Invoice(int id, int buyerId, int renterId){
         super(id);
         this.buyerId = buyerId;
         this.renterId = renterId;
@@ -28,7 +28,7 @@ public class Invoice extends Serializable
         this.rating = BusRating.NONE;
         this.status = PaymentStatus.WAITING;
     }
-    public Invoice(int id, Account buyer, Renter renter, String time){
+    public Invoice(int id, Account buyer, Renter renter){
         super(id);
         this.buyerId = buyer.id;
         this.renterId = renter.id;

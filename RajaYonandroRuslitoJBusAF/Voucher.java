@@ -42,4 +42,10 @@ public class Voucher extends Serializable
             return false; 
         }
     }
+    public boolean read(){
+        return false;        
+    }
+    public Object write(){
+        return null;
+    }
 }

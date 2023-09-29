@@ -15,4 +15,10 @@ public class Account extends Serializable
     public String toString(){
         return "\n Account ID : " + id + "\n Name : " + name + "\n Email : " + email + "\n Password : " + password;
     }
+    public boolean read(){
+        return false;        
+    }
+    public Object write(){
+        return null;
+    }
 }
