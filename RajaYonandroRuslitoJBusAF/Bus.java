@@ -42,7 +42,7 @@ public class Bus extends Serializable{
         int currentSeat = 1;
         
         for(String seat : schedule.seatAvailability.keySet()){
-            System.out.print(seat + " | " + schedule.seatAvailability.get(seat) + "\t");
+            System.out.print(seat + " : " + schedule.seatAvailability.get(seat) + "\t");
             
             if(currentSeat % maxSeatsPerRow == 0){
                 System.out.println();
