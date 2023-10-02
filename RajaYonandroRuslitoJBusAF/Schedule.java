@@ -15,8 +15,8 @@ public class Schedule
     
     private void initializeSeatAvailability(int numberOfSeats){
          seatAvailability = new LinkedHashMap<>();
-          for (int seatNumber = 0; seatNumber <= numberOfSeats; seatNumber++) {
-            seatAvailability.put("AF" + seatNumber, true); 
+          for (int seatNumber = 0; seatNumber < numberOfSeats; seatNumber++) {
+            seatAvailability.put("AF" + (seatNumber + 1), true); 
         }
     }
 }

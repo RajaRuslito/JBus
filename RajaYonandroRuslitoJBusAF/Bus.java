@@ -2,6 +2,7 @@ package RajaYonandroRuslitoJBusAF;
 import java.util.List;
 import java.util.Calendar;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 
 public class Bus extends Serializable{
     public int capacity;
@@ -31,9 +32,23 @@ public class Bus extends Serializable{
         schedules.add(schedule);
     }
     public void printSchedule(Schedule schedule){
-        System.out.println("Tanggal Keberangkatan : " + schedule.departureSchedule.getTime());
-        System.out.println("Daftar Kursi dan Ketersediaan Kursi : ");
-        System.out.println(schedule.seatAvailability);
+        SimpleDateFormat format
+            = new SimpleDateFormat ("\n'Tanggal keberangkatan: 'MMMM dd, yyyy HH:mm:ss");
+        
+        System.out.println(format.format(schedule.departureSchedule.getTime()));
+        System.out.println("Daftar Kursi dan Ketersediaan Kursi : ");     
+        
+        int maxSeatsPerRow = 4;
+        int currentSeat = 1;
+        
+        for(String seat : schedule.seatAvailability.keySet()){
+            System.out.print(seat + " | " + schedule.seatAvailability.get(seat) + "\t");
+            
+            if(currentSeat % maxSeatsPerRow == 0){
+                System.out.println();
+            }
+            currentSeat++;
+        }
     }
     public boolean read(){
         return false;        

@@ -18,16 +18,18 @@ public class Payment extends Invoice
     public Payment(int id, int buyerId, int renterId, int busId, String busSeat){
         super(id, buyerId, renterId);
         this.busId = busId;
-        this.departureDate = Calendar.getInstance();;
+        this.departureDate = Calendar.getInstance();
         this.busSeat = busSeat;
         departureDate.add(Calendar.DATE, 2);
     }
     public String getDepartureInfo(){
-        return "\nStation Details = " + "\n ID :" + id +"\n Bus ID : " + busId + "\n Departure : " + departureDate.getTime() + "\n Bus Seat : " + busSeat;
+        SimpleDateFormat formatted = new SimpleDateFormat("MMMM, d yyyy hh:mm:ss"); 
+        String formattedDate = formatted.format(departureDate.getTime());
+        return "\nStation Details = " + "\n ID : " + id + "\n Buyer ID : " + buyerId + "\n Renter ID : " + renterId + "\n Bus ID : " + busId + "\n Departure Date : " + formattedDate + "\n Bus Seat : " + busSeat;
     }
     public String getTime(){
         SimpleDateFormat formatted = new SimpleDateFormat("MMMM, d yyyy hh:mm:ss"); 
-        String formattedDate = formatted.format(departureDate.getTime());
+        String formattedDate = formatted.format(super.time.getTime());
         return formattedDate;
     }
     public int getBusid(){
