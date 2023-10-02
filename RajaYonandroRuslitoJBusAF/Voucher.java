@@ -1,6 +1,6 @@
 package RajaYonandroRuslitoJBusAF;
 
-public class Voucher extends Serializable
+public class Voucher extends Serializable implements FileParser
 {
     public String name;
     private boolean used;
@@ -42,7 +42,7 @@ public class Voucher extends Serializable
             return false; 
         }
     }
-    public boolean read(){
+    public boolean read(String obj){
         return false;        
     }
     public Object write(){
