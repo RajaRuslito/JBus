@@ -52,7 +52,7 @@ public class JBus{
         for(Schedule s: testBus.schedules){
             testBus.printSchedule(s);
         }*/
-        Bus b = createBus();
+        /*Bus b = createBus();
         Timestamp schedule1 = Timestamp.valueOf("2023-7-18 15:00:00");
         Timestamp schedule2 = Timestamp.valueOf("2023-7-20 12:00:00");
         b.addSchedule(schedule1, 12);
@@ -77,6 +77,8 @@ public class JBus{
         // Check if the data changed
         System.out.println("\nUpdated Schedule\n");
         b.schedules.forEach(Schedule::printSchedule);
+        */
+        System.out.println("Hello from IntelliJ!");
     }
     public static int getBusId(){
         return 0;
