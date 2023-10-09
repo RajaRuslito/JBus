@@ -1,10 +1,12 @@
 package RajaYonandroRuslitoJBusAF;
+import java.util.List;
 import java.util.Map;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
 import java.text.*;
+
 
 public class Schedule
 {
@@ -29,8 +31,21 @@ public class Schedule
         }
         return false;
     }
+    public boolean isSeatAvailable(List<String> seat){
+        for(int i = 0; i < seat.size(); i++){
+            if(seatAvailability.containsKey(seat.get(i))){
+                return seatAvailability.get(seat.get(i));
+            }
+        }
+        return false;
+    }
     public void bookSeat(String seat){
         this.seatAvailability.put(seat, false);
+    }
+    public void bookSeat(List<String> seat){
+        for(String i : seat){
+            seatAvailability.put(i, false);
+        }
     }
     public void printSchedule(){
         /*SimpleDateFormat format = new SimpleDateFormat ("\n'Tanggal keberangkatan: 'MMMM dd, yyyy HH:mm:ss");
@@ -66,5 +81,11 @@ public class Schedule
             currentSeat++;
         }
         System.out.println("\n");
+    }
+
+    @Override
+    public String toString(){
+        int occupy = Algorithm.count(seatAvailability.values().iterator(), true);
+        return "Schedule\t: " + departureSchedule + "\nOccupied\t: " +  occupy + "\n" + seatAvailability.size();
     }
 }

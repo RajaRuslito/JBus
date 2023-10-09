@@ -1,6 +1,7 @@
 package RajaYonandroRuslitoJBusAF;
 import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Payment extends Invoice
 {
@@ -22,15 +23,40 @@ public class Payment extends Invoice
         this.busSeat = busSeat;
         //departureDate.add(Calendar.DATE, 2);
     }
-    public static boolean isAvailable(Timestamp departureSchedule, String seat, Bus bus){
+    /*public static boolean isAvailable(Timestamp departureSchedule, String seat, Bus bus){
         for(Schedule baru : bus.schedules){
             if(baru.departureSchedule.equals(departureSchedule) && baru.isSeatAvailable(seat)){
                 return true;
             }
         }
         return false;
+    }*/
+    public static Schedule availableSchedule(Timestamp departureSchedule, List<String> seat, Bus bus){
+        for(Schedule baru : bus.schedules){
+            if(baru.departureSchedule.equals(departureSchedule) && baru.isSeatAvailable(seat)){
+                return baru;
+            }
+        }
+        return null;
+    }
+    public static Schedule availableSchedule(Timestamp departureSchedule, String seat, Bus bus){
+        for(Schedule baru : bus.schedules){
+            if(baru.departureSchedule.equals(departureSchedule) && baru.isSeatAvailable(seat)){
+                return baru;
+            }
+        }
+        return null;
     }
     public static boolean makeBooking(Timestamp departureSchedule, String seat, Bus bus){
+        for(Schedule baru : bus.schedules){
+            if(baru.departureSchedule.equals(departureSchedule) && baru.isSeatAvailable(seat)){
+                baru.bookSeat(seat);
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean makeBooking(Timestamp departureSchedule, List<String> seat, Bus bus){
         for(Schedule baru : bus.schedules){
             if(baru.departureSchedule.equals(departureSchedule) && baru.isSeatAvailable(seat)){
                 baru.bookSeat(seat);
