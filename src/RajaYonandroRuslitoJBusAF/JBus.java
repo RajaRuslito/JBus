@@ -229,7 +229,7 @@ public class JBus {
         listOfSchedules.add(Timestamp.valueOf("2023-7-22 10:00:00"));
         listOfSchedules.add(Timestamp.valueOf("2023-7-26 12:00:00"));
 
-        listOfSchedules.forEach(b::addSchedule);
+        //listOfSchedules.forEach(b::addSchedule);
         System.out.println("Page 1");
         Algorithm.paginate(b.schedules, 0, 3, t -> true).forEach(System.out::println);
         System.out.println("=====================================================");
