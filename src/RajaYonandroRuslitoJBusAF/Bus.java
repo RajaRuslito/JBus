@@ -29,7 +29,7 @@ public class Bus extends Serializable implements FileParser
         this.city = city;
         this.schedules = new ArrayList<>();
     }
-    public void addSchedule(Timestamp calendar, int capacity){
+    public void addSchedule(Timestamp calendar){
         Schedule schedule = new Schedule(calendar, capacity);
         schedules.add(schedule);
     }

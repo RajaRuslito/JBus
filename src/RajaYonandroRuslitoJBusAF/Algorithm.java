@@ -167,7 +167,7 @@ public class Algorithm {
         //int lastIndex = page * pageSize;
         while (iterator.hasNext() && (retPage.size() < page)) {
             T check = iterator.next();
-            if ((cnt < ((page + 1) * pageSize)) && (cnt > (page * pageSize))) {
+            if ((cnt <= ((page + 1) * pageSize)) && (cnt == (page * pageSize))) {
                 retPage.add(check);
                 cnt++;
             } else {
