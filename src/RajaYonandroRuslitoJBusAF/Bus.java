@@ -34,7 +34,7 @@ public class Bus extends Serializable
         schedules.add(schedule);
     }*/
     public String toString(){
-        return " ID : " + id + "\n NaString obje : " + name + "\n Facility : " + facility + "\n Price : " + price + "\n Capacity : " + capacity + "\n Bus Type : " + busType + "\n City : " + city + "\n\n Departure = " + departure + "\n Arrival = " + arrival;
+        return " ID : " + id + "\n String objek : " + name + "\n Facility : " + facility + "\n Price : " + price + "\n Capacity : " + capacity + "\n Bus Type : " + busType + "\n City : " + city + "\n\n Departure = " + departure + "\n Arrival = " + arrival;
     }
     public boolean read(String obj){
         return false;        

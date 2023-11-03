@@ -13,6 +13,6 @@ public class Station extends Serializable
         this.address = address;
     }
     public String toString(){
-        return "\n  ID : " + id + "\n  Station Name : " + stationName + "\n  City : " + city + "\n  Address : " + address;
+        return "\n  ID : " + id + "\n  Station Name : " + stationName + "\n  City : " + city + "\n  Address : " + address + "\n";
     }
 }

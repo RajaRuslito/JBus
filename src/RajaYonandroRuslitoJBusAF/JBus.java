@@ -225,6 +225,7 @@ public class JBus{
     }
 } */
 public class JBus {
+
     public static void main(String[] args) {
         /*String filepath = "D:\\oop\\JBus\\data\\station.json";
         Gson gson = new Gson();
@@ -239,9 +240,9 @@ public class JBus {
             e.printStackTrace();
         }*/
         try {
-            String filepath = "D:\\oop\\JBus\\data\\buses.json";
+            String filepath = "D:\\oop\\JBus\\data\\buses_CS.json";
             JsonTable<Bus> busList = new JsonTable<>(Bus.class, filepath);
-            List<Bus> filteredBus = filterByDeparture(busList, City.JAKARTA, 1, 10);
+            List<Bus> filteredBus = filterByDeparture(busList, City.JAKARTA, 0,3);
             filteredBus.forEach(bus -> System.out.println(bus.toString()));
         } catch (Throwable t) {
             t.printStackTrace();
@@ -252,11 +253,47 @@ public class JBus {
         List<Bus> list = new ArrayList<>();
 
         for (Bus bus : buses) {
-            if (bus.city == departure) {
+            if (bus.departure.city == departure) {
                 list.add(bus);
             }
         }
-        return list;
+
+        List<Bus> pagingList = Algorithm.paginate(list, page, pageSize, (e)-> {
+            return true;
+        });
+
+        return pagingList;
+    }
+
+    public static List<Bus> filterByPrice (List<Bus> buses, int min, int max){
+        List<Bus> sortedPrice = Algorithm.<Bus>collect(buses, (e) -> {
+            return e.price.price >= min && e.price.price <= max;
+        });
+
+        return sortedPrice;
+    }
+
+    public static Bus filterBusId(List<Bus> buses, int id){
+        Bus busesID = Algorithm.<Bus>find(buses, (e) -> {
+            return e.id == e.id;
+        });
+
+        return busesID;
+    }
+
+    public static List<Bus> filterByDepartureAndArrival(List<Bus> buses, City departure, City arrival, int page, int pageSize){
+        List<Bus> list = new ArrayList<>();
+
+        for(Bus bus : buses){
+            if(bus.arrival.city == arrival && bus.departure.city == departure){
+                list.add(bus);
+            }
+        }
+        List<Bus> pagingList = Algorithm.<Bus>paginate(list, page, pageSize, (e) -> {
+            return true;
+        });
+
+        return pagingList;
     }
     /*public static void main(String[] args) {
         // PT Modul 5
