@@ -226,7 +226,7 @@ public class JBus{
 } */
 public class JBus {
     public static void main(String[] args) {
-        String filepath = "D:\\oop\\JBus\\data\\station.json";
+        /*String filepath = "D:\\oop\\JBus\\data\\station.json";
         Gson gson = new Gson();
 
         try {
@@ -237,7 +237,26 @@ public class JBus {
             buffer.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }*/
+        try {
+            String filepath = "D:\\oop\\JBus\\data\\buses.json";
+            JsonTable<Bus> busList = new JsonTable<>(Bus.class, filepath);
+            List<Bus> filteredBus = filterByDeparture(busList, City.JAKARTA, 1, 10);
+            filteredBus.forEach(bus -> System.out.println(bus.toString()));
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
+    }
+
+    public static List<Bus> filterByDeparture(List<Bus> buses, City departure, int page, int pageSize) {
+        List<Bus> list = new ArrayList<>();
+
+        for (Bus bus : buses) {
+            if (bus.city == departure) {
+                list.add(bus);
+            }
+        }
+        return list;
     }
     /*public static void main(String[] args) {
         // PT Modul 5
