@@ -1,5 +1,7 @@
 package com.RajaYonandroRuslitoJBusAF;
 
+import com.RajaYonandroRuslitoJBusAF.dbjson.Serializable;
+
 public class Station extends Serializable
 {
     public String address;

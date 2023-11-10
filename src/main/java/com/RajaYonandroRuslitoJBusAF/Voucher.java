@@ -1,5 +1,7 @@
 package com.RajaYonandroRuslitoJBusAF;
 
+import com.RajaYonandroRuslitoJBusAF.dbjson.Serializable;
+
 public class Voucher extends Serializable
 {
     public String name;

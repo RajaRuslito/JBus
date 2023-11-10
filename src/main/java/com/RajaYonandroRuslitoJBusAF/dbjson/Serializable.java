@@ -1,4 +1,4 @@
-package com.RajaYonandroRuslitoJBusAF;
+package com.RajaYonandroRuslitoJBusAF.dbjson;
 
 import java.util.HashMap;
 

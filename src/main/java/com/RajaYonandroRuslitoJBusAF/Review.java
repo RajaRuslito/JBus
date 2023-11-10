@@ -1,5 +1,7 @@
 package com.RajaYonandroRuslitoJBusAF;
 
+import com.RajaYonandroRuslitoJBusAF.dbjson.Serializable;
+
 public class Review extends Serializable
 {
     public String date;

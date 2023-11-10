@@ -1,8 +1,8 @@
 package com.RajaYonandroRuslitoJBusAF;
+import com.RajaYonandroRuslitoJBusAF.dbjson.Serializable;
+
 import java.util.List;
-import java.util.Calendar;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
 import java.sql.Timestamp;
 
 public class Bus extends Serializable
