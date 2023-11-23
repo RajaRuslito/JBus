@@ -27,12 +27,12 @@ public class AccountController implements BasicGetController<Account>
         return accountTable;
     }
 
-    @JsonAutowired(value = Account.class, filepath = "D:\\oop\\JBus\\data\\accountDatabase.json")
+    @JsonAutowired(value = Account.class, filepath = "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\accountDatabase.json")
         public static JsonTable<Account> accountTable;
 
     static {
         try {
-            accountTable = new JsonTable<>(Account.class, "D:\\oop\\JBus\\data\\accountDatabase.json");
+            accountTable = new JsonTable<>(Account.class, "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\accountDatabase.json");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

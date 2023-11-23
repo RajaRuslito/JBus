@@ -4,12 +4,16 @@ import com.RajaYonandroRuslitoJBusAF.*;
 import com.RajaYonandroRuslitoJBusAF.dbjson.JsonAutowired;
 import com.RajaYonandroRuslitoJBusAF.dbjson.JsonTable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.Timestamp;
 import java.util.List;
 
+@RestController
+@RequestMapping("/bus")
 public class BusController implements BasicGetController<Bus>  {
 
     public static @JsonAutowired(value = Bus.class, filepath = "src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\bus.json") JsonTable<Bus> busTable;
@@ -58,7 +62,6 @@ public class BusController implements BasicGetController<Bus>  {
         if(newbus != null){
             try{
                 newbus.addSchedule(timestamp);
-
             }
             catch(Exception e){
                 e.printStackTrace();
