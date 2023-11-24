@@ -24,7 +24,7 @@ public class Account extends Serializable
         validate();
     }
     public String toString(){
-        return " Name : " + name + "\n Email : " + email + "\n Password : " + password + "\n";
+        return " Name : " + name + "\n Email : " + email + "\n Password : " + password + "\n\n";
     }
 
     public boolean validate() {
