@@ -126,6 +126,7 @@ public class AccountController implements BasicGetController<Account>
 
     @PostMapping("/{id}/topUp")
     BaseResponse<Double> topUp(@PathVariable int id, @RequestParam double amount) {
+        System.out.printf("Enter here\n");
         for(Account account : accountTable) {
             if(/*account.id == id && */account.topUp(amount)) {
                 return new BaseResponse<>(true, "Berhasil Top Up", amount);
