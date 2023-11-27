@@ -21,7 +21,7 @@ public class Bus extends Serializable
     public Bus(String name, List<Facility> facilities, Price price, int capacity, BusType busType/*, City city*/, Station departure, Station arrival, int accountId){
         super();
         this.name = name;
-        this.facilities = new ArrayList<>();
+        this.facilities = facilities;
         this.price = price;
         this.capacity = capacity;
         this.departure = departure;

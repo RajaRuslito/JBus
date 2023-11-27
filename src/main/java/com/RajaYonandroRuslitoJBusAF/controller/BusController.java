@@ -3,11 +3,9 @@ package com.RajaYonandroRuslitoJBusAF.controller;
 import com.RajaYonandroRuslitoJBusAF.*;
 import com.RajaYonandroRuslitoJBusAF.dbjson.JsonAutowired;
 import com.RajaYonandroRuslitoJBusAF.dbjson.JsonTable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -37,7 +35,7 @@ public class BusController implements BasicGetController<Bus>  {
 /*
         try {*/
 
-            Account newacc = Algorithm.<Account>find(AccountController.accountTable, e -> e.id == accountId && e.company != null);
+            /*Account newacc = Algorithm.<Account>find(AccountController.accountTable, e -> e.id == accountId && e.company != null);
             Station departure = Algorithm.<Station>find(StationController.stationTable, e -> e.id == stationDepartureId);
             Station arrival = Algorithm.<Station>find(StationController.stationTable, e -> e.id == stationArrivalId);
             // Validate parameters
@@ -49,7 +47,35 @@ public class BusController implements BasicGetController<Bus>  {
             }
             Bus newbus = new Bus(name, facilities, new Price(price), capacity, busType, departure,  arrival, accountId);
             busTable.add(newbus);
-            return new BaseResponse<>(true, "Jadwal Bus Telah Dibuat", newbus);
+            return new BaseResponse<>(true, "Jadwal Bus Telah Dibuat", newbus);*/
+        JsonTable<Station> stations;
+        JsonTable<Account> accounts;
+        try {
+            accounts = new JsonTable<>(Account.class, AccountController.accountTable.filepath);
+            stations = new JsonTable<>(Station.class, StationController.stationTable.filepath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Station arrival = Algorithm.<Station>find(stations, (e) -> {
+            return e.id == stationArrivalId;
+        });
+
+        Station departure = Algorithm.<Station>find(stations, (e) -> {
+            return e.id == stationDepartureId;
+        });
+
+        if (Algorithm.<Account>exists(accounts, (e) -> {
+            return e.id == accountId;
+        }) && arrival != null && departure != null) {
+            Bus bus = new Bus(name, facilities, new Price(price), capacity, busType, departure, arrival, accountId);
+
+            busTable.add(bus);
+
+            return new BaseResponse<>(true, "Successful", bus);
+        }
+
+        return new BaseResponse<>(false, "Unsuccessful", null);
     }
 
     @PostMapping("/addSchedule")
@@ -70,5 +96,10 @@ public class BusController implements BasicGetController<Bus>  {
             return new BaseResponse<>(true, "Schedule Telah Ditambah", newbus);
         }
         return new BaseResponse<>(false, "Bus Tidak Ditemukan", null);
+    }
+
+    @GetMapping("/getMyBus")
+    public List<Bus> getMyBus(@RequestParam int accountId) {
+        return Algorithm.<Bus>collect(getJsonTable(), b->b.accountId==accountId);
     }
 }

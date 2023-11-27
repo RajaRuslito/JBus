@@ -1,1 +1,1 @@
-[{"capacity":0,"accountId":0,"id":1},{"capacity":0,"accountId":0,"id":2}]
+[{"capacity":30,"facilities":["AC","LCD_TV"],"name":"Farron Follower Bus","price":{"rebate":0.0,"price":125000.0},"departure":{"address":"RT.2/RW.8, Pasar Manggis, Kota Jakarta Selatan","city":"JAKARTA","stationName":"Terminal Manggarai","id":1},"arrival":{"address":"Kasian, Bungurasih, Kabupaten Sidoarjo, Jawa Timur","city":"SURABAYA","stationName":"Terminal Purabaya","id":3},"busType":"DOUBLE_DECKER","schedules":[],"accountId":0,"id":0}]

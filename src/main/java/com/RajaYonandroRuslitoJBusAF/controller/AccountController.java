@@ -81,17 +81,6 @@ public class AccountController implements BasicGetController<Account>
 
     @PostMapping("/login")
     BaseResponse<Account> login(@RequestParam String email, @RequestParam String password) {
-        for (Account accounts : accountTable) {
-            if (accounts.email.equals(email) && accounts.password.equals(password)) {
-                return new BaseResponse<>(true, "Berhasil Login", accounts);
-            }
-            else if(!accounts.email.equals(email)){
-                return new BaseResponse<>(false, "Gagal Login, Email Salah", null);
-            }
-            else if(!accounts.password.equals(password)){
-                return new BaseResponse<>(false, "Gagal Login, Password Salah", null);
-            }
-        }
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes());
@@ -106,10 +95,21 @@ public class AccountController implements BasicGetController<Account>
         catch (NoSuchAlgorithmException e){
             e.printStackTrace();
         }
+        for (Account accounts : accountTable) {
+            if (accounts.email.equals(email) && accounts.password.equals(password)) {
+                return new BaseResponse<>(true, "Berhasil Login", accounts);
+            }
+            else if(!accounts.email.equals(email)){
+                return new BaseResponse<>(false, "Gagal Login, Email Salah", null);
+            }
+            else if(!accounts.password.equals(password)){
+                return new BaseResponse<>(false, "Gagal Login, Password Salah", null);
+            }
+        }
         return new BaseResponse<>(false, "Gagal Login", null);
     }
 
-    @PostMapping("/{id}/registerRenter")
+    @PostMapping("/{id}/registerRenter" )
     BaseResponse<Renter> registerRenter(@PathVariable int id, @RequestParam String companyName, @RequestParam String phoneNumber, @RequestParam String address) {
         for (Account accounts : accountTable) {
             if (accounts.id == id && accounts.company == null) {
