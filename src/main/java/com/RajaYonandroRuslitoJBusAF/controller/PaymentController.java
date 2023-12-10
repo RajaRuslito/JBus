@@ -108,9 +108,9 @@ public class PaymentController implements BasicGetController<Payment> {
      * @param id ID of the payment to be accepted.
      * @return BaseResponse containing the result of the accept operation.
      */
-    @PostMapping("/{id}/accept")
+    @PostMapping("/accept")
     BaseResponse<Payment> accept(
-            @PathVariable int id,
+            @RequestParam int id,
             @RequestParam int buyerId,
             @RequestParam int busId
     ) {
