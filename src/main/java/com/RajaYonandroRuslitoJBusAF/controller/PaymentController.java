@@ -110,13 +110,15 @@ public class PaymentController implements BasicGetController<Payment> {
      */
     @PostMapping("/{id}/accept")
     BaseResponse<Payment> accept(
-            @PathVariable int id
+            @PathVariable int id,
+            @RequestParam int buyerId,
+            @RequestParam int busId
     ) {
-        Account account = Algorithm.<Account>find(AccountController.accountTable, e -> e.balance == e.balance);
+        Account account = Algorithm.<Account>find(AccountController.accountTable, e -> e.balance == e.balance && e.id == buyerId);
         Payment payment = Algorithm.<Payment>find(paymentTable, (p) -> {
             return p.id == id;
         });
-        Bus bus = Algorithm.<Bus>find(BusController.busTable, e -> e.price.price == e.price.price);
+        Bus bus = Algorithm.<Bus>find(BusController.busTable, e -> e.id == busId);
         if (payment != null) {
             payment.status = Invoice.PaymentStatus.SUCCESS;
             account.balance = account.balance - (double) bus.price.price;
