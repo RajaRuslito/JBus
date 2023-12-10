@@ -1,7 +1,6 @@
 package com.RajaYonandroRuslitoJBusAF;
 
-public enum BusType
-{
+public enum BusType {
     REGULER,
     HIGH_DECKER,
     MINIBUS,

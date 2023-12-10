@@ -1,33 +1,68 @@
 package com.RajaYonandroRuslitoJBusAF;
 
 
-public class Rating{
+/**
+ * Represents a rating system with count, total, and average functionalities.
+ */
+public class Rating {
     private long count;
     private long total;
-    
-    public Rating(){
+
+    /**
+     * Constructs a Rating object with initial count and total set to zero.
+     */
+    public Rating() {
         this.count = 0;
         this.total = 0;
     }
-    public void insert(int rating){
+
+    /**
+     * Inserts a new rating into the system, updating the count and total.
+     *
+     * @param rating The rating to be inserted.
+     */
+    public void insert(int rating) {
         this.total += rating;
         this.count += 1;
     }
-    public long getTotal(){
+
+    /**
+     * Retrieves the total sum of ratings.
+     *
+     * @return The total sum of ratings.
+     */
+    public long getTotal() {
         return this.total;
     }
-    public long getCount(){
+
+    /**
+     * Retrieves the count of ratings.
+     *
+     * @return The count of ratings.
+     */
+    public long getCount() {
         return this.count;
     }
-    public double getAverage(){
-        if(this.count == 0){
+
+    /**
+     * Calculates the average rating based on the count and total.
+     *
+     * @return The average rating, or 0 if there are no ratings.
+     */
+    public double getAverage() {
+        if (this.count == 0) {
             return 0;
-        }
-        else{
+        } else {
             return (this.total / this.count);
         }
     }
-    public String toString(){
+
+    /**
+     * Returns a string representation of the Rating object.
+     *
+     * @return A string containing the count and total information.
+     */
+    public String toString() {
         return " Count : " + count + "\n Total : " + total;
     }
 }

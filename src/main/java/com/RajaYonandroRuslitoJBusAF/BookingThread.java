@@ -1,6 +1,7 @@
 package com.RajaYonandroRuslitoJBusAF;
 
 import java.sql.Timestamp;
+
 public class BookingThread extends Thread {
     private Bus bus;
     private Timestamp timestamp;
@@ -11,7 +12,7 @@ public class BookingThread extends Thread {
         this.timestamp = timestamp;
         this.start();
     }
-    @Override
+    /*@Override
     public void run() {
         System.out.println(super.getName() + " ID : " + super.getId() + " is running");
         //System.out.println("Id Thread " + super.getId());
@@ -21,7 +22,7 @@ public class BookingThread extends Thread {
                 System.out.println("Thread " + super.getId() + " " + res + " Melakukan Booking");
             }
         }
-    }
+    }*/
 
     /*public void run() {
         for(Schedule schedule : bus.schedules) {

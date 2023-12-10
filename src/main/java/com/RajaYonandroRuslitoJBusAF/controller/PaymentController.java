@@ -11,16 +11,38 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Controller class handling payment-related operations.
+ * Implements BasicGetController for basic GET operations.
+ *
+ * @RestController Indicates that this class is a controller handling HTTP requests.
+ * @RequestMapping("/payment") Specifies the base URI path for mapping to this controller.
+ */
 @RestController
 @RequestMapping("/payment")
 public class PaymentController implements BasicGetController<Payment> {
 
+    /**
+     * JsonTable for storing and retrieving Payment objects.
+     *
+     * @JsonAutowired Custom annotation indicating JSON file details for automatic wiring.
+     */
     public static @JsonAutowired(value = Payment.class, filepath = "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\payment.json") JsonTable<Payment> paymentTable;
 
+    /**
+     * Static block to initialize the paymentTable with JSON file details.
+     * Throws a RuntimeException if an IOException occurs during initialization.
+     */
     @Override
     public JsonTable<Payment> getJsonTable() {
         return paymentTable;
     }
+
+    /**
+     * Retrieves the JsonTable instance for Payment objects.
+     *
+     * @return JsonTable instance for Payment objects.
+     */
     static {
         try {
             paymentTable = new JsonTable<>(Payment.class, "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\payment.json");
@@ -28,14 +50,19 @@ public class PaymentController implements BasicGetController<Payment> {
             throw new RuntimeException(e);
         }
     }
-    /*@Override
-    public JsonTable<Payment> getJsonTable() {
-        return paymentTable;
-    }*/
 
-    //@PostMapping("/makeBooking")
+    /**
+     * Handles HTTP POST request for making a booking.
+     *
+     * @param buyerId       ID of the buyer.
+     * @param renterId      ID of the renter.
+     * @param busId         ID of the bus.
+     * @param busSeats      List of bus seats to be booked.
+     * @param departureDate Departure date and time in string format.
+     * @return BaseResponse containing the result of the booking operation.
+     */
     @RequestMapping(value = "/makeBooking", method = RequestMethod.POST)
-    public BaseResponse<Payment> makeBooking(
+    BaseResponse<Payment> makeBooking(
             @RequestParam int buyerId,
             @RequestParam int renterId,
             @RequestParam int busId,
@@ -43,7 +70,6 @@ public class PaymentController implements BasicGetController<Payment> {
             @RequestParam String departureDate
 
     ) {
-
         JsonTable<Account> accounts;
         JsonTable<Bus> buses;
         try {
@@ -53,108 +79,84 @@ public class PaymentController implements BasicGetController<Payment> {
             throw new RuntimeException(e);
         }
 
-        Account buyer = Algorithm.<Account>find(accounts, (e) -> {
-            return e.id == buyerId;
+        Account buyer = Algorithm.<Account>find(AccountController.accountTable, acc -> acc.id == buyerId);
+        Account renter = Algorithm.<Account>find(AccountController.accountTable, acc -> acc.company.id == renterId);
+        Bus bus = Algorithm.<Bus>find(BusController.busTable, b -> b.id == busId);
+        Schedule schedule = Algorithm.<Schedule>find(bus.schedules, s -> {
+            return s.departureSchedule.equals(Timestamp.valueOf(departureDate));
         });
+        boolean temp = Algorithm.<Payment>exists(paymentTable, seats -> seats.busSeats.equals(busSeats));
 
-        Bus bus = Algorithm.<Bus>find(buses, (e) -> {
-            boolean bal_check = buyer == null ? false : e.price.price < buyer.balance;
-            return e.id == busId && bal_check && e.schedules.contains(Timestamp.valueOf(departureDate));
-        });
 
-        if(buyer != null && bus != null && buyer.company.id == renterId) {
-            Renter renter = buyer.company;
-            Payment payment = new Payment(buyer, renter, busId, busSeats, Timestamp.valueOf(departureDate));
-
-            return new BaseResponse<>(true, "Successful", payment);
+        if (buyer != null && schedule != null && !temp) {
+            if (Payment.makeBooking(Timestamp.valueOf(departureDate), busSeats, bus)) {
+                Payment p = new Payment(buyer, renter.company, busId, busSeats, Timestamp.valueOf(departureDate));
+                p.status = Invoice.PaymentStatus.WAITING;
+                paymentTable.add(p);
+                return new BaseResponse<>(true, "Booking Successful", p);
+            } else if (buyer.balance <= bus.price.price) {
+                return new BaseResponse<>(false, "Not Enough Balance, Failed to Book", null);
+            }
+            return new BaseResponse<>(false, "Failed to Book, Couldn't Find Any Matches", null);
         }
-
-        return new BaseResponse<>(false, "Unsuccessful", null);
+        return new BaseResponse<>(false, "Failed to Book", null);
     }
+
+    /**
+     * Handles HTTP POST request for accepting a payment.
+     *
+     * @param id ID of the payment to be accepted.
+     * @return BaseResponse containing the result of the accept operation.
+     */
     @PostMapping("/{id}/accept")
     BaseResponse<Payment> accept(
             @PathVariable int id
     ) {
-        Payment payment =Algorithm.<Payment>find(paymentTable, e -> e.id==id);
-        if (payment != null){
+        Account account = Algorithm.<Account>find(AccountController.accountTable, e -> e.balance == e.balance);
+        Payment payment = Algorithm.<Payment>find(paymentTable, (p) -> {
+            return p.id == id;
+        });
+        Bus bus = Algorithm.<Bus>find(BusController.busTable, e -> e.price.price == e.price.price);
+        if (payment != null) {
             payment.status = Invoice.PaymentStatus.SUCCESS;
+            account.balance = account.balance - (double) bus.price.price;
             return new BaseResponse<>(true, "Payment Accepted", payment);
+        } else if (account.balance <= (double) bus.price.price) {
+            return new BaseResponse<>(false, "Accepting Payment Failed, Not Enough Balance", null);
         }
-        return new BaseResponse<>(false, "Cannot Accept Payment", null);
+        return new BaseResponse<>(false, "Accepting Payment Failed", null);
     }
+
+    /**
+     * Handles HTTP POST request for canceling a payment.
+     *
+     * @param id ID of the payment to be canceled.
+     * @return BaseResponse containing the result of the cancel operation.
+     */
     @PostMapping("/{id}/cancel")
     BaseResponse<Payment> cancel(
             @PathVariable int id
     ) {
-        Payment payment =Algorithm.<Payment>find(paymentTable, e -> e.id==id);
-        if (payment != null){
+        Payment payment = Algorithm.<Payment>find(paymentTable, (p) -> {
+            return p.id == id;
+        });
+        if (payment != null) {
             payment.status = Invoice.PaymentStatus.FAILED;
             return new BaseResponse<Payment>(true, "Payment Cancelled", payment);
         }
-        return new BaseResponse<Payment>(false, "Cannot cancel the payment", null);
+        return new BaseResponse<Payment>(false, "Canceling Payment Failed", null);
+    }
+
+    /**
+     * Handles HTTP GET request for retrieving payments of a specific buyer.
+     *
+     * @param buyerId ID of the buyer.
+     * @return List of Payment objects belonging to the specified buyer.
+     */
+    @GetMapping("/getMyPayment")
+    List<Payment> getMyPayment(@RequestParam int buyerId) {
+        return Algorithm.<Payment>collect(getJsonTable(), b -> b.buyerId == buyerId);
     }
 
 }
 
-/*
-
-        import org.springframework.web.bind.annotation.*;
-
-        import java.sql.Timestamp;
-        import java.util.List;
-
-@RestController
-@RequestMapping("/payment")
-public class PaymentController implements BasicGetController<Payment>{
-    public static @JsonAutowired(value = Bus.class, filepath = "C:\\Java\\JBus\\src\\main\\java\\com\\MuhammadSesarafliAljagraJBusBR\\json\\payment.json") JsonTable<Payment> paymentTable;
-    @Override
-    public JsonTable<Payment> getJsonTable() {
-        return paymentTable;
-    }
-
-    //Add new Station
-    @PostMapping("/makeBooking")
-    BaseResponse<Payment> makeBooking(
-            @RequestParam int buyerId,
-            @RequestParam int renterId,
-            @RequestParam int busId,
-            @RequestParam List<String> busSeats,
-            @RequestParam String departureDate
-    ) {
-        Account buyers = Algorithm.<Account>find(AccountController.accountTable, e -> e.id==buyerId);
-        Bus bus = Algorithm.<Bus>find(BusController.busTable, e -> e.id==busId);
-
-        if (buyers != null && bus != null) {
-            Payment.makeBooking(Timestamp.valueOf(departureDate), busSeats, bus);
-            Payment payment = new Payment(buyerId, renterId, busId, busSeats, Timestamp.valueOf(departureDate));
-            paymentTable.add(payment);
-            return new BaseResponse<>(true, "Success Make a book!", payment);
-        }
-        return new BaseResponse<>(false, "Failed To book!", null);
-
-    }
-    @PostMapping("/{id}/accept")
-    BaseResponse<Payment> accept(
-            @PathVariable int id
-    ) {
-        Payment payment =Algorithm.<Payment>find(paymentTable, e -> e.id==id);
-        if (payment != null){
-            payment.status = Invoice.PaymentStatus.SUCCESS;
-            return new BaseResponse<>(true, "Payment Accepted", payment);
-        }
-        return new BaseResponse<>(false, "Cannot Accept Payment", null);
-    }
-    @PostMapping("/{id}/cancel")
-    BaseResponse<Payment> cancel(
-            @PathVariable int id
-    ) {
-        Payment payment =Algorithm.<Payment>find(paymentTable, e -> e.id==id);
-        if (payment != null){
-            payment.status = Invoice.PaymentStatus.FAILED;
-            return new BaseResponse<Payment>(true, "Payment Cancelled", payment);
-        }
-        return new BaseResponse<Payment>(false, "Cannot cancel the payment", null);
-    }
-}
-//!Algorithm.<Payment>exists(paymentTable, e-> e.busSeats.equals(busSeats)
-//!Algorithm.<Payment>exist(Algorithm.<Schedule>find(busTable, e -> e.schedules==departureDate).bus)*/

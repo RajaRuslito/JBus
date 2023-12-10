@@ -10,17 +10,43 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * Controller class handling bus-related operations.
+ * Implements BasicGetController for basic GET operations.
+ *
+ * @RestController Indicates that this class is a controller handling HTTP requests.
+ * @RequestMapping("/bus") Specifies the base URI path for mapping to this controller.
+ */
 @RestController
 @RequestMapping("/bus")
-public class BusController implements BasicGetController<Bus>  {
+public class BusController implements BasicGetController<Bus> {
 
+    /**
+     * JsonTable for storing and retrieving Bus objects.
+     *
+     * @JsonAutowired Custom annotation indicating JSON file details for automatic wiring.
+     */
     public static @JsonAutowired(value = Bus.class, filepath = "src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\bus.json") JsonTable<Bus> busTable;
-    //public static JsonTable<Bus> busTable;
+
     @Override
     public JsonTable<Bus> getJsonTable() {
         return busTable;
     }
 
+
+    /**
+     * Handles HTTP POST request for creating a new bus.
+     *
+     * @param accountId          ID of the account associated with the bus.
+     * @param name               Name of the bus.
+     * @param capacity           Capacity of the bus.
+     * @param facilities         List of facilities available in the bus.
+     * @param busType            Type of the bus.
+     * @param price              Price of the bus.
+     * @param stationDepartureId ID of the departure station.
+     * @param stationArrivalId   ID of the arrival station.
+     * @return BaseResponse containing the result of the bus creation operation.
+     */
     @PostMapping("/create")
     public BaseResponse<Bus> create(
             @RequestParam int accountId,
@@ -31,75 +57,68 @@ public class BusController implements BasicGetController<Bus>  {
             @RequestParam int price,
             @RequestParam int stationDepartureId,
             @RequestParam int stationArrivalId
-    ){
-/*
-        try {*/
+    ) {
+        Account account = Algorithm.<Account>find(AccountController.accountTable, acc -> acc.id == accountId && acc.company != null);
+        Station departure = Algorithm.<Station>find(StationController.stationTable, station -> station.id == stationDepartureId);
+        Station arrival = Algorithm.<Station>find(StationController.stationTable, station -> station.id == stationArrivalId);
 
-            /*Account newacc = Algorithm.<Account>find(AccountController.accountTable, e -> e.id == accountId && e.company != null);
-            Station departure = Algorithm.<Station>find(StationController.stationTable, e -> e.id == stationDepartureId);
-            Station arrival = Algorithm.<Station>find(StationController.stationTable, e -> e.id == stationArrivalId);
-            // Validate parameters
-            if (newacc == null) {
-                return new BaseResponse<>(false, "Account Tidak Ditemukan", null);
-            }
-            if(departure == null || arrival == null){
-                return new BaseResponse<>(false, "Jadwal Departure/Arrival Tidak Ditemukan", null);
-            }
-            Bus newbus = new Bus(name, facilities, new Price(price), capacity, busType, departure,  arrival, accountId);
-            busTable.add(newbus);
-            return new BaseResponse<>(true, "Jadwal Bus Telah Dibuat", newbus);*/
-        JsonTable<Station> stations;
-        JsonTable<Account> accounts;
-        try {
-            accounts = new JsonTable<>(Account.class, AccountController.accountTable.filepath);
-            stations = new JsonTable<>(Station.class, StationController.stationTable.filepath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (account == null) {
+            return new BaseResponse<>(false, "Couldn't Find Any Matching Account or Renter", null);
         }
 
-        Station arrival = Algorithm.<Station>find(stations, (e) -> {
-            return e.id == stationArrivalId;
-        });
-
-        Station departure = Algorithm.<Station>find(stations, (e) -> {
-            return e.id == stationDepartureId;
-        });
-
-        if (Algorithm.<Account>exists(accounts, (e) -> {
-            return e.id == accountId;
-        }) && arrival != null && departure != null) {
-            Bus bus = new Bus(name, facilities, new Price(price), capacity, busType, departure, arrival, accountId);
-
-            busTable.add(bus);
-
-            return new BaseResponse<>(true, "Successful", bus);
+        if (departure == null || arrival == null) {
+            return new BaseResponse<>(false, "Departure/Arrival Not Found", null);
         }
+        Bus newbus = new Bus(name, facilities, new Price(price), capacity, busType, departure, arrival, accountId);
+        busTable.add(newbus);
+        return new BaseResponse<>(true, "Bus Successfully Added", newbus);
 
-        return new BaseResponse<>(false, "Unsuccessful", null);
     }
 
+    /**
+     * Handles HTTP POST request for adding a schedule to an existing bus.
+     *
+     * @param busId ID of the bus to which the schedule is added.
+     * @param time  Time of the schedule in string format.
+     * @return BaseResponse containing the result of the schedule addition operation.
+     */
     @PostMapping("/addSchedule")
     public BaseResponse<Bus> addSchedule(
             @RequestParam int busId,
             @RequestParam String time
-    ){
+    ) {
         Bus newbus = Algorithm.<Bus>find(busTable, e -> e.id == busId);
         Timestamp timestamp = Timestamp.valueOf(time);
-        if(newbus != null){
-            try{
+        if (newbus != null) {
+            try {
                 newbus.addSchedule(timestamp);
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-                return new BaseResponse<>(false, "Schedule Gagal Ditambah", null);
             }
-            return new BaseResponse<>(true, "Schedule Telah Ditambah", newbus);
+            return new BaseResponse<>(true, "Schedule Successfully Added", newbus);
         }
-        return new BaseResponse<>(false, "Bus Tidak Ditemukan", null);
+        return new BaseResponse<>(false, "Bus Not Found", null);
     }
 
+    /**
+     * Handles HTTP GET request for retrieving buses associated with a specific account.
+     *
+     * @param accountId ID of the account.
+     * @return List of Bus objects associated with the specified account.
+     */
     @GetMapping("/getMyBus")
     public List<Bus> getMyBus(@RequestParam int accountId) {
-        return Algorithm.<Bus>collect(getJsonTable(), b->b.accountId==accountId);
+        return Algorithm.<Bus>collect(getJsonTable(), b -> b.accountId == accountId);
     }
+
+    /**
+     * Handles HTTP GET request for retrieving all buses.
+     *
+     * @return BaseResponse containing the list of all buses.
+     */
+    @GetMapping("/getBuses")
+    public BaseResponse<List<Bus>> getBuses() {
+        return new BaseResponse<>(true, "Success", getJsonTable());
+    }
+
 }

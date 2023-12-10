@@ -11,25 +11,44 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
-
+/**
+ * Controller class handling account-related operations.
+ * Implements BasicGetController for basic GET operations.
+ *
+ * @RestController Indicates that this class is a controller handling HTTP requests.
+ * @RequestMapping("/account") Specifies the base URI path for mapping to this controller.
+ */
 @RestController
 @RequestMapping("/account")
-public class AccountController implements BasicGetController<Account>
-{
+public class AccountController implements BasicGetController<Account> {
     @GetMapping
     String index() {
         return "account page";
     }
 
+    /**
+     * Retrieves the JsonTable instance for Account objects.
+     *
+     * @return JsonTable instance for Account objects.
+     */
     @Override
     public JsonTable<Account> getJsonTable() {
         return accountTable;
     }
 
-    @JsonAutowired(value = Account.class, filepath = "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\accountDatabase.json")
-        public static JsonTable<Account> accountTable;
+    /**
+     * JsonTable for storing and retrieving Account objects.
+     *
+     * @JsonAutowired Custom annotation indicating JSON file details for automatic wiring.
+     */
+    public static @JsonAutowired(value = Account.class, filepath = "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\accountDatabase.json") JsonTable<Account> accountTable;
 
+    /**
+     * Static block to initialize the accountTable with JSON file details.
+     * Throws a RuntimeException if an IOException occurs during initialization.
+     */
     static {
         try {
             accountTable = new JsonTable<>(Account.class, "D:\\oop\\JBus\\src\\main\\java\\com\\RajaYonandroRuslitoJBusAF\\json\\accountDatabase.json");
@@ -38,105 +57,139 @@ public class AccountController implements BasicGetController<Account>
         }
     }
 
+    /**
+     * Handles HTTP POST request for user registration.
+     *
+     * @param name     Name of the user.
+     * @param email    Email of the user.
+     * @param password Password of the user.
+     * @return BaseResponse containing the result of the registration operation.
+     */
     @PostMapping("/register")
-    BaseResponse<Account> register(@RequestParam String name, @RequestParam String email, @RequestParam String password) {
+    BaseResponse<Account> register(
+            @RequestParam String name,
+            @RequestParam String email,
+            @RequestParam String password
+    ) {
         Account newaccount = new Account(name, email, password);
-        /*if (!newaccount.validate() || (name.isBlank() || email.isBlank() || password.isBlank()) || Algorithm.exists(accountTable, newaccount)){
-            return new BaseResponse<>(false, "Gagal Register", null);
-        }*/
-
-        if(name.isBlank()){
-            return new BaseResponse<>(false, "Gagal Register, Harap Masukkan Nama", null);
-        }
-        else if(email.isBlank()){
-            return new BaseResponse<>(false, "Gagal Register, Harap Masukkan Email", null);
-        }
-        else if(password.isBlank()){
-            return new BaseResponse<>(false, "Gagal Register, Harap Masukkan Password", null);
-        }
-        else if(!newaccount.validate()){
-            return new BaseResponse<>(false, "Gagal Register, Email/Password Invalid", null);
-        }
-        else if(Algorithm.exists(accountTable, newaccount)){
-            return new BaseResponse<>(false, "Gagal Register, Email Sudah Terpakai", null);
+        if (name.isBlank()) {
+            return new BaseResponse<>(false, "Fail to Register, Name Cannot Be Blank!", null);
+        } else if (email.isBlank()) {
+            return new BaseResponse<>(false, "Fail to Register, Email Cannot Be Blank!", null);
+        } else if (password.isBlank()) {
+            return new BaseResponse<>(false, "Fail to Register, Password Cannot Be Blank!", null);
+        } else if (!newaccount.validate()) {
+            return new BaseResponse<>(false, "Fail to Register, Email/Password Invalid", null);
+        } else if (Algorithm.exists(accountTable, newaccount)) {
+            return new BaseResponse<>(false, "Fail to Register, Email Already Exist", null);
         }
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes());
-            byte[] bytes = md.digest();;
+            byte[] bytes = md.digest();
+            ;
 
             StringBuilder strB = new StringBuilder();
 
-            for(int i = 0; i < bytes.length;i++){
+            for (int i = 0; i < bytes.length; i++) {
                 strB.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
-        }
-        catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         accountTable.add(newaccount);
-        return new BaseResponse<>(true, "Berhasil Register", newaccount);
+        return new BaseResponse<>(true, "Register Success", newaccount);
     }
 
+    /**
+     * Handles HTTP POST request for user login.
+     *
+     * @param email    Email of the user.
+     * @param password Password of the user.
+     * @return BaseResponse containing the result of the login operation.
+     */
     @PostMapping("/login")
-    BaseResponse<Account> login(@RequestParam String email, @RequestParam String password) {
+    BaseResponse<Account> login(
+            @RequestParam String email,
+            @RequestParam String password
+    ) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes());
-            byte[] bytes = md.digest();;
+            byte[] bytes = md.digest();
+            ;
 
             StringBuilder strB = new StringBuilder();
 
-            for(int i = 0; i < bytes.length;i++){
+            for (int i = 0; i < bytes.length; i++) {
                 strB.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
-        }
-        catch (NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        for (Account accounts : accountTable) {
-            if (accounts.email.equals(email) && accounts.password.equals(password)) {
-                return new BaseResponse<>(true, "Berhasil Login", accounts);
-            }
-            else if(!accounts.email.equals(email)){
-                return new BaseResponse<>(false, "Gagal Login, Email Salah", null);
-            }
-            else if(!accounts.password.equals(password)){
-                return new BaseResponse<>(false, "Gagal Login, Password Salah", null);
-            }
+        Account accounts = Algorithm.<Account>find(AccountController.accountTable, acc -> Objects.equals(acc.email, email) && Objects.equals(acc.password, password));
+        if (accounts != null) {
+            return new BaseResponse<>(true, "Login Success", accounts);
+        } else {
+            return new BaseResponse<>(false, "Login Failed, Wrong Email/Password", null);
         }
-        return new BaseResponse<>(false, "Gagal Login", null);
+
     }
 
-    @PostMapping("/{id}/registerRenter" )
+    /**
+     * Handles HTTP POST request for registering as a renter.
+     *
+     * @param id          ID of the user.
+     * @param companyName Name of the renter's company.
+     * @param phoneNumber Phone number of the renter.
+     * @param address     Address of the renter.
+     * @return BaseResponse containing the result of the renter registration operation.
+     */
+    @PostMapping("/{id}/registerRenter")
     BaseResponse<Renter> registerRenter(@PathVariable int id, @RequestParam String companyName, @RequestParam String phoneNumber, @RequestParam String address) {
         for (Account accounts : accountTable) {
             if (accounts.id == id && accounts.company == null) {
                 Renter renter = new Renter(companyName, phoneNumber, address);
                 accounts.company = renter;
-                return new BaseResponse<>(true, "Berhasil Register Renter", renter);
-            }
-            else if(accounts.id != id){
-                return new BaseResponse<>(false, "Gagal Register Renter, Id Salah", null);
+                return new BaseResponse<>(true, "Successfully Registered as Renter", renter);
+            } else if (accounts.id != id) {
+                return new BaseResponse<>(false, "Failed to Register as Renter, Wrong Id", null);
             }
         }
-        return new BaseResponse<>(false, "Gagal Register Renter", null);
+        return new BaseResponse<>(false, "Register Renter Failed", null);
     }
 
+    /**
+     * Handles HTTP POST request for topping up the account balance.
+     *
+     * @param id     ID of the user.
+     * @param amount Amount to be topped up.
+     * @return BaseResponse containing the result of the top-up operation.
+     */
     @PostMapping("/{id}/topUp")
     BaseResponse<Double> topUp(@PathVariable int id, @RequestParam double amount) {
         System.out.printf("Enter here\n");
-        for(Account account : accountTable) {
-            if(/*account.id == id && */account.topUp(amount)) {
-                return new BaseResponse<>(true, "Berhasil Top Up", amount);
+        for (Account account : accountTable) {
+            if (account.id == id && account.topUp(amount)) {
+                return new BaseResponse<>(true, "Top Up Success", amount);
             }
         }
-        return new BaseResponse<>(false, "Gagal Top Up", 0.0D);
+        return new BaseResponse<>(false, "Top Up Failed", 0.0D);
     }
-    /*@GetMapping("/{id}")
-    String getById(@PathVariable int id) {
-        return "account id " + id + " not found!";
-    }*/
+
+    /**
+     * Handles HTTP GET request for retrieving the user's ID.
+     *
+     * @param id ID of the user.
+     * @return BaseResponse containing the user's ID.
+     */
+    @GetMapping("/{id}/getMyId")
+    BaseResponse<Account> getMyId(@RequestParam int id) {
+        Account acc = Algorithm.<Account>find(getJsonTable(), (e) -> {
+            return e.id == id;
+        });
+        return new BaseResponse<>(true, "id", acc);
+    }
 
 }

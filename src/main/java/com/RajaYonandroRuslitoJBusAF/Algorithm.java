@@ -1,4 +1,5 @@
 package com.RajaYonandroRuslitoJBusAF;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -41,7 +42,7 @@ public class Algorithm {
     public static <T> List<T> collect(Iterator<T> iterator, Predicate<T> pred) {
         List<T> list = new ArrayList();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             T tempVar = iterator.next();
             if (pred.predicate(tempVar)) {
                 list.add(tempVar);
@@ -83,7 +84,7 @@ public class Algorithm {
     public static <T> int count(Iterator<T> iterator, Predicate<T> pred) {
         int count = 0;
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             if (pred.predicate(iterator.next())) {
                 ++count;
             }
@@ -114,7 +115,7 @@ public class Algorithm {
     }
 
     public static <T> T find(Iterator<T> iterator, Predicate<T> pred) {
-        while(true) {
+        while (true) {
             if (iterator.hasNext()) {
                 T current = iterator.next();
                 if (!pred.predicate(current)) {
@@ -160,7 +161,7 @@ public class Algorithm {
     }
 
     public static <T> boolean exists(Iterator<T> iterator, Predicate<T> pred) {
-        while(true) {
+        while (true) {
             if (iterator.hasNext()) {
                 T current = iterator.next();
                 if (!pred.predicate(current)) {
@@ -189,7 +190,7 @@ public class Algorithm {
         int count = 0;
         int startindex = page * pagesize;
         int endindex = startindex + pagesize;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             T obj = iterator.next();
             if (pred.predicate(obj)) {
                 if (count >= startindex && count < endindex) {

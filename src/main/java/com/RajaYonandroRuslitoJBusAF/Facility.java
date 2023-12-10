@@ -1,13 +1,13 @@
 package com.RajaYonandroRuslitoJBusAF;
 
 
-public enum Facility{
+public enum Facility {
     AC,
     LUNCH,
     TOILET,
     COOL_BOX,
     WIFI,
     LCD_TV,
-    ELECTRIC_SOCKET, 
+    ELECTRIC_SOCKET,
     LARGE_BAGGAGE;
 }
