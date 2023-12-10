@@ -83,8 +83,25 @@ public class AccountController implements BasicGetController<Account> {
         } else if (Algorithm.exists(accountTable, newaccount)) {
             return new BaseResponse<>(false, "Fail to Register, Email Already Exist", null);
         }
-
+        String passwordHash = password;
+        String generatePassword = null;
         try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            md.update(passwordHash.getBytes());
+
+            byte[] bytes = md.digest();
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatePassword = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        newaccount.password = generatePassword;
+        /*try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(password.getBytes());
             byte[] bytes = md.digest();
@@ -97,7 +114,7 @@ public class AccountController implements BasicGetController<Account> {
             }
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        }
+        }*/
         accountTable.add(newaccount);
         return new BaseResponse<>(true, "Register Success", newaccount);
     }
@@ -114,21 +131,21 @@ public class AccountController implements BasicGetController<Account> {
             @RequestParam String email,
             @RequestParam String password
     ) {
+        String generatedPass = password;
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(password.getBytes());
+            md.update(generatedPass.getBytes());
             byte[] bytes = md.digest();
-            ;
-
-            StringBuilder strB = new StringBuilder();
-
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.length; i++) {
-                strB.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
+            generatedPass = sb.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        Account accounts = Algorithm.<Account>find(AccountController.accountTable, acc -> Objects.equals(acc.email, email) && Objects.equals(acc.password, password));
+        String finalGeneratedPass = generatedPass;
+        Account accounts = Algorithm.<Account>find(AccountController.accountTable, acc -> Objects.equals(acc.email, email) && acc.password.equals(finalGeneratedPass));
         if (accounts != null) {
             return new BaseResponse<>(true, "Login Success", accounts);
         } else {
@@ -148,14 +165,13 @@ public class AccountController implements BasicGetController<Account> {
      */
     @PostMapping("/{id}/registerRenter")
     BaseResponse<Renter> registerRenter(@PathVariable int id, @RequestParam String companyName, @RequestParam String phoneNumber, @RequestParam String address) {
-        for (Account accounts : accountTable) {
-            if (accounts.id == id && accounts.company == null) {
-                Renter renter = new Renter(companyName, phoneNumber, address);
-                accounts.company = renter;
-                return new BaseResponse<>(true, "Successfully Registered as Renter", renter);
-            } else if (accounts.id != id) {
-                return new BaseResponse<>(false, "Failed to Register as Renter, Wrong Id", null);
-            }
+        Account accounts = Algorithm.<Account>find(AccountController.accountTable, acc -> acc.id == id);
+        if (accounts.id == id && accounts.company == null) {
+            Renter renter = new Renter(companyName, phoneNumber, address);
+            accounts.company = renter;
+            return new BaseResponse<>(true, "Successfully Registered as Renter", renter);
+        } else if (accounts.id != id) {
+            return new BaseResponse<>(false, "Failed to Register as Renter, Wrong Id", null);
         }
         return new BaseResponse<>(false, "Register Renter Failed", null);
     }
